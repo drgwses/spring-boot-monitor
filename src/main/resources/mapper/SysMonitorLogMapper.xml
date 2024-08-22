@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sh.monitor.mapper.SysMonitorLogDao">
+	<!-- SysMonitorLog的resultMap,column是给数据库列起的别名,它对应property类的属性 -->
+	<resultMap id="result_SysMonitorLog_Map" type="com.sh.monitor.entity.SysMonitorLog">
+		<id column="id" property="id" />
+		<result column="system_name" property="systemName" />
+		<result column="system_code" property="systemCode" />
+		<result column="monitor_result" property="monitorResult" />
+		<result column="fail_info" property="failInfo" />
+		<result column="create_date" property="createDate" />
+		<result column="update_date" property="updateDate" />
+		<result column="is_deleted" property="isDeleted" />
+		<result column="sys_type" property="sysType" />
+	</resultMap>
+
+	<!-- assist是查询辅助工具类, ${req.require}表示列名,#{req.value}表示值它是防SQL注入的 -->
+	<sql id="assist">
+		<where>
+			<foreach collection="require" item="req" separator=" ">
+				${req.require}
+				<if test="req.value != null">
+					#{req.value}
+				</if>
+				<if test="req.values != null">
+					<foreach collection="req.values" item="value" separator=",">
+						#{value}
+					</foreach>
+				</if>
+				<if test="req.customRequire !=null">
+					<foreach collection="req.customRequire" item="cr" separator=" ">
+						${cr.require}
+						<if test="cr.value != null">
+							#{cr.value}
+						</if>
+						<if test="cr.values != null">
+							<foreach collection="cr.values" item="value"
+								separator=",">
+								#{value}
+							</foreach>
+						</if>
+						<if test="cr.suffix != null"> ${cr.suffix}</if>
+					</foreach>
+				</if>
+				<if test="req.suffix != null"> ${req.suffix}</if>
+			</foreach>
+		</where>
+	</sql>
+
+	<!-- updateAssist用于更新数据查询辅助工具类,作用assist与一致 -->
+	<sql id="updateAssist">
+		<where>
+			<foreach collection="assist.require" item="req" separator=" ">
+				${req.require}
+				<if test="req.value != null">
+					#{req.value}
+				</if>
+				<if test="req.values != null">
+					<foreach collection="req.values" item="value" separator=",">
+						#{value}
+					</foreach>
+				</if>
+				<if test="req.customRequire !=null">
+					<foreach collection="req.customRequire" item="cr" separator=" ">
+						${cr.require}
+						<if test="cr.value != null">
+							#{cr.value}
+						</if>
+						<if test="cr.values != null">
+							<foreach collection="cr.values" item="value"
+								separator=",">
+								#{value}
+							</foreach>
+						</if>
+						<if test="cr.suffix != null"> ${cr.suffix}</if>
+					</foreach>
+				</if>
+				<if test="req.suffix != null"> ${req.suffix}</if>
+			</foreach>
+		</where>
+	</sql>
+
+	<!-- 数据库中表名为:sys_monitor_log的列名 -->
+	<sql id="sys_monitor_log_Column">
+		id,system_name,system_code,monitor_result,fail_info,create_date,update_date,is_deleted,sys_type
+	</sql>
+
+	<!--获得类名为:SysMonitorLog对应的数据库表的数据总行数 -->
+	<select id="getSysMonitorLogRowCount" parameterType="com.sh.monitor.common.util.Assist" resultType="java.lang.Long">
+		select count(*) from sys_monitor_log
+		<if test="require!=null">
+			<include refid="assist" />
+		</if>
+	</select>
+	
+	<!-- 获得类名为:SysMonitorLog对应数据库中表的数据集合 -->
+	<select id="selectSysMonitorLog" parameterType="com.sh.monitor.common.util.Assist" resultMap="result_SysMonitorLog_Map">
+		select
+		<if test="distinct !=null">${distinct}</if>
+		<choose>
+			<when test="resultColumn!=null">${resultColumn}</when>
+			<otherwise>
+				<include refid="sys_monitor_log_Column" />
+			</otherwise>
+		</choose>
+		from sys_monitor_log
+		<if test="require!=null">
+			<include refid="assist" />
+		</if>
+		<if test="order !=null">${order}</if>
+		<choose>
+			<when test="startRow !=null and rowSize !=null">LIMIT #{startRow},#{rowSize} </when>
+			<when test="rowSize !=null">LIMIT #{rowSize}</when>
+		</choose>
+	</select>
+	<!-- 通过SysMonitorLog的id获得对应数据库中表的数据对象 -->
+	<select id="selectSysMonitorLogById" parameterType="String" resultMap="result_SysMonitorLog_Map">
+		select
+		<include refid="sys_monitor_log_Column" />
+		from sys_monitor_log
+		where id = #{id}
+	</select>
+	
+	<!-- 获得一个SysMonitorLog对象,以参数SysMonitorLog对象中不为空的属性作为条件进行查询 -->
+	<select id="selectSysMonitorLogObjSingle" parameterType="com.sh.monitor.entity.SysMonitorLog" resultMap="result_SysMonitorLog_Map">
+		select
+		<include refid="sys_monitor_log_Column" />
+		from sys_monitor_log
+		<where>
+		<if test="systemName != null"> and system_name = #{systemName}</if>
+		<if test="systemCode != null"> and system_code = #{systemCode}</if>
+		<if test="monitorResult != null"> and monitor_result = #{monitorResult}</if>
+		<if test="failInfo != null"> and fail_info = #{failInfo}</if>
+		<if test="createDate != null"> and create_date = #{createDate}</if>
+		<if test="updateDate != null"> and update_date = #{updateDate}</if>
+		<if test="isDeleted != null"> and is_deleted = #{isDeleted}</if>
+		<if test="sysType != null"> and sys_type = #{sysType}</if>
+		<if test="id != null"> and id = #{id} </if>
+		</where>
+		LIMIT 1
+	</select>
+	
+	<!-- 获得SysMonitorLog对象,以参数SysMonitorLog对象中不为空的属性作为条件进行查询 -->
+	<select id="selectSysMonitorLogByObj" parameterType="com.sh.monitor.entity.SysMonitorLog" resultMap="result_SysMonitorLog_Map">
+		select
+		<include refid="sys_monitor_log_Column" />
+		from sys_monitor_log
+		<where>
+		<if test="systemName != null"> and system_name = #{systemName}</if>
+		<if test="systemCode != null"> and system_code = #{systemCode}</if>
+		<if test="monitorResult != null"> and monitor_result = #{monitorResult}</if>
+		<if test="failInfo != null"> and fail_info = #{failInfo}</if>
+		<if test="createDate != null"> and create_date = #{createDate}</if>
+		<if test="updateDate != null"> and update_date = #{updateDate}</if>
+		<if test="isDeleted != null"> and is_deleted = #{isDeleted}</if>
+		<if test="sysType != null"> and sys_type = #{sysType}</if>
+		<if test="id != null"> and id = #{id} </if>
+		</where>
+	</select>
+
+	<!-- 将SysMonitorLog插入到对应数据库的表中,包括属性值为null的数据 -->
+	<insert id="insertSysMonitorLog" parameterType="com.sh.monitor.entity.SysMonitorLog">
+		insert into 
+		sys_monitor_log (id,system_name,system_code,monitor_result,fail_info,create_date,update_date,is_deleted,sys_type) 
+		values(#{id},#{systemName},#{systemCode},#{monitorResult},#{failInfo},#{createDate},#{updateDate},#{isDeleted},#{sysType})
+	</insert>
+
+	<!-- 将SysMonitorLog中属性值不为null的数据,插入到对应数据库的表中 -->
+	<insert id="insertNotNullSysMonitorLog" parameterType="com.sh.monitor.entity.SysMonitorLog">
+		insert into sys_monitor_log
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">id,</if>
+			<if test="systemName != null">system_name,</if>
+			<if test="systemCode != null">system_code,</if>
+			<if test="monitorResult != null">monitor_result,</if>
+			<if test="failInfo != null">fail_info,</if>
+			<if test="createDate != null">create_date,</if>
+			<if test="updateDate != null">update_date,</if>
+			<if test="isDeleted != null">is_deleted,</if>
+			<if test="sysType != null">sys_type,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">#{id},</if>
+			<if test="systemName != null">#{systemName},</if>
+			<if test="systemCode != null">#{systemCode},</if>
+			<if test="monitorResult != null">#{monitorResult},</if>
+			<if test="failInfo != null">#{failInfo},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="updateDate != null">#{updateDate},</if>
+			<if test="isDeleted != null">#{isDeleted},</if>
+			<if test="sysType != null">#{sysType},</if>
+		</trim>
+	</insert>
+
+	<!-- 将SysMonitorLog批量插入到对应数据库的表中 -->
+	<insert id="insertSysMonitorLogByBatch" parameterType="ArrayList">
+		insert into sys_monitor_log(id,system_name,system_code,monitor_result,fail_info,create_date,update_date,is_deleted,sys_type) values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.id},#{item.systemName},#{item.systemCode},#{item.monitorResult},#{item.failInfo},#{item.createDate},#{item.updateDate},#{item.isDeleted},#{item.sysType})
+		</foreach>
+	</insert>
+	
+	<!-- 通过SysMonitorLog的id将数据库表中对应的数据删除 -->
+	<delete id="deleteSysMonitorLogById" parameterType="String">
+		delete from sys_monitor_log
+		where  id  =  #{id}
+	</delete>
+
+	<!-- 通过辅助工具Assist中的条件将SysMonitorLog对应的数据库表的数据删除 -->
+	<delete id="deleteSysMonitorLogByAssist" parameterType="com.sh.monitor.common.util.Assist">
+		delete from sys_monitor_log
+		<if test="require!=null">
+			<include refid="assist" />
+		</if>
+	</delete>
+	
+	<!-- 通过SysMonitorLog的id将SysMonitorLog的数据更新到数据库中对应的表,包括值null的数据 -->
+	<update id="updateSysMonitorLogById" parameterType="com.sh.monitor.entity.SysMonitorLog"> 
+		update sys_monitor_log set
+		<set>
+			system_name = #{systemName} , 
+			system_code = #{systemCode} , 
+			monitor_result = #{monitorResult} , 
+			fail_info = #{failInfo} , 
+			create_date = #{createDate} , 
+			update_date = #{updateDate} , 
+			is_deleted = #{isDeleted} , 
+			sys_type = #{sysType} , 
+		</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 通过SysMonitorLog的id将SysMonitorLog中属性值不为null的数据更新到数据库对应的表中 -->
+	<update id="updateNotNullSysMonitorLogById" parameterType="com.sh.monitor.entity.SysMonitorLog">
+		update sys_monitor_log
+		<set>
+					<if test="systemName != null">system_name = #{systemName},</if>
+					<if test="systemCode != null">system_code = #{systemCode},</if>
+					<if test="monitorResult != null">monitor_result = #{monitorResult},</if>
+					<if test="failInfo != null">fail_info = #{failInfo},</if>
+					<if test="createDate != null">create_date = #{createDate},</if>
+					<if test="updateDate != null">update_date = #{updateDate},</if>
+					<if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+					<if test="sysType != null">sys_type = #{sysType},</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 通过辅助工具Assist中的条件将SysMonitorLog中的数据更新到数据库对应的表中,包括值为null的数据 -->
+	<update id="updateSysMonitorLog" parameterType="map">
+		update sys_monitor_log
+		<set>
+			id = #{enti.id},
+			system_name = #{enti.systemName},
+			system_code = #{enti.systemCode},
+			monitor_result = #{enti.monitorResult},
+			fail_info = #{enti.failInfo},
+			create_date = #{enti.createDate},
+			update_date = #{enti.updateDate},
+			is_deleted = #{enti.isDeleted},
+			sys_type = #{enti.sysType},
+		</set>
+		<if test="assist.require!=null">
+			<include refid="updateAssist" />
+		</if>
+	</update>
+
+	<!-- 通过辅助工具Assist中的条件将SysMonitorLog中属性值不为null的数据更新到数据库对应的表中 -->
+	<update id="updateNotNullSysMonitorLog" parameterType="map">
+		update sys_monitor_log
+		<set>
+			<if test="enti.id != null">id = #{enti.id},</if>
+			<if test="enti.systemName != null">system_name = #{enti.systemName},</if>
+			<if test="enti.systemCode != null">system_code = #{enti.systemCode},</if>
+			<if test="enti.monitorResult != null">monitor_result = #{enti.monitorResult},</if>
+			<if test="enti.failInfo != null">fail_info = #{enti.failInfo},</if>
+			<if test="enti.createDate != null">create_date = #{enti.createDate},</if>
+			<if test="enti.updateDate != null">update_date = #{enti.updateDate},</if>
+			<if test="enti.isDeleted != null">is_deleted = #{enti.isDeleted},</if>
+			<if test="enti.sysType != null">sys_type = #{enti.sysType},</if>
+		</set>
+		<if test="assist.require!=null">
+			<include refid="updateAssist" />
+		</if>
+	</update>
+</mapper>

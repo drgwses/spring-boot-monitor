@@ -1,0 +1,25 @@
+# 配置端口
+server:
+  port: 18764
+  servlet:
+    context-path: /ohms-monitor
+spring:
+  # 配置数据源
+  application:
+    name: ohms-monitor
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.110.102:13306/ydjt_open_platform_hx?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF8&useSSL=false
+    username: ydjtdejftest
+    password: Sg186!@#
+    type: com.alibaba.druid.pool.DruidDataSource
+# mybatis配置
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+# 浏览器驱动配置
+chromeDriverPath: C:\Users\袁振\Desktop\springaaa\spring-boot-monitor\src\main\resources\drivers\chromedriver.exe
+
+loadLocal:
+  scheduled:
+    fixedRate: 60000
+

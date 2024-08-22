@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sh.monitor.mapper.SysMonitorConfigDao">
+	<!-- SysMonitorConfig的resultMap,column是给数据库列起的别名,它对应property类的属性 -->
+	<resultMap id="result_SysMonitorConfig_Map" type="com.sh.monitor.entity.SysMonitorConfig">
+		<id column="id" property="id" />
+		<result column="system_status" property="systemStatus" />
+		<result column="system_cron" property="systemCron" />
+		<result column="system_switch" property="systemSwitch" />
+		<result column="system_name" property="systemName" />
+		<result column="system_code" property="systemCode" />
+		<result column="logger_name" property="loggerName" />
+		<result column="logger_password" property="loggerPassword" />
+		<result column="client_url" property="clientUrl" />
+		<result column="create_date" property="createDate" />
+		<result column="update_date" property="updateDate" />
+		<result column="is_deleted" property="isDeleted" />
+		<result column="sys_type" property="sysType" />
+	</resultMap>
+
+	<!-- assist是查询辅助工具类, ${req.require}表示列名,#{req.value}表示值它是防SQL注入的 -->
+	<sql id="assist">
+		<where>
+			<foreach collection="require" item="req" separator=" ">
+				${req.require}
+				<if test="req.value != null">
+					#{req.value}
+				</if>
+				<if test="req.values != null">
+					<foreach collection="req.values" item="value" separator=",">
+						#{value}
+					</foreach>
+				</if>
+				<if test="req.customRequire !=null">
+					<foreach collection="req.customRequire" item="cr" separator=" ">
+						${cr.require}
+						<if test="cr.value != null">
+							#{cr.value}
+						</if>
+						<if test="cr.values != null">
+							<foreach collection="cr.values" item="value"
+								separator=",">
+								#{value}
+							</foreach>
+						</if>
+						<if test="cr.suffix != null"> ${cr.suffix}</if>
+					</foreach>
+				</if>
+				<if test="req.suffix != null"> ${req.suffix}</if>
+			</foreach>
+		</where>
+	</sql>
+
+	<!-- updateAssist用于更新数据查询辅助工具类,作用assist与一致 -->
+	<sql id="updateAssist">
+		<where>
+			<foreach collection="assist.require" item="req" separator=" ">
+				${req.require}
+				<if test="req.value != null">
+					#{req.value}
+				</if>
+				<if test="req.values != null">
+					<foreach collection="req.values" item="value" separator=",">
+						#{value}
+					</foreach>
+				</if>
+				<if test="req.customRequire !=null">
+					<foreach collection="req.customRequire" item="cr" separator=" ">
+						${cr.require}
+						<if test="cr.value != null">
+							#{cr.value}
+						</if>
+						<if test="cr.values != null">
+							<foreach collection="cr.values" item="value"
+								separator=",">
+								#{value}
+							</foreach>
+						</if>
+						<if test="cr.suffix != null"> ${cr.suffix}</if>
+					</foreach>
+				</if>
+				<if test="req.suffix != null"> ${req.suffix}</if>
+			</foreach>
+		</where>
+	</sql>
+
+	<!-- 数据库中表名为:sys_monitor_config的列名 -->
+	<sql id="sys_monitor_config_Column">
+		id,system_status,system_cron,system_switch,system_name,system_code,logger_name,logger_password,client_url,create_date,update_date,is_deleted,sys_type
+	</sql>
+
+	<!--获得类名为:SysMonitorConfig对应的数据库表的数据总行数 -->
+	<select id="getSysMonitorConfigRowCount" parameterType="com.sh.monitor.common.util.Assist" resultType="java.lang.Long">
+		select count(*) from sys_monitor_config
+		<if test="require!=null">
+			<include refid="assist" />
+		</if>
+	</select>
+	
+	<!-- 获得类名为:SysMonitorConfig对应数据库中表的数据集合 -->
+	<select id="selectSysMonitorConfig" parameterType="com.sh.monitor.common.util.Assist" resultMap="result_SysMonitorConfig_Map">
+		select
+		<if test="distinct !=null">${distinct}</if>
+		<choose>
+			<when test="resultColumn!=null">${resultColumn}</when>
+			<otherwise>
+				<include refid="sys_monitor_config_Column" />
+			</otherwise>
+		</choose>
+		from sys_monitor_config
+		<if test="require!=null">
+			<include refid="assist" />
+		</if>
+		<if test="order !=null">${order}</if>
+		<choose>
+			<when test="startRow !=null and rowSize !=null">LIMIT #{startRow},#{rowSize} </when>
+			<when test="rowSize !=null">LIMIT #{rowSize}</when>
+		</choose>
+	</select>
+	<!-- 通过SysMonitorConfig的id获得对应数据库中表的数据对象 -->
+	<select id="selectSysMonitorConfigById" parameterType="String" resultMap="result_SysMonitorConfig_Map">
+		select
+		<include refid="sys_monitor_config_Column" />
+		from sys_monitor_config
+		where id = #{id}
+	</select>
+	
+	<!-- 获得一个SysMonitorConfig对象,以参数SysMonitorConfig对象中不为空的属性作为条件进行查询 -->
+	<select id="selectSysMonitorConfigObjSingle" parameterType="com.sh.monitor.entity.SysMonitorConfig" resultMap="result_SysMonitorConfig_Map">
+		select
+		<include refid="sys_monitor_config_Column" />
+		from sys_monitor_config
+		<where>
+		<if test="systemStatus != null"> and system_status = #{systemStatus}</if>
+		<if test="systemCron != null"> and system_cron = #{systemCron}</if>
+		<if test="systemSwitch != null"> and system_switch = #{systemSwitch}</if>
+		<if test="systemName != null"> and system_name = #{systemName}</if>
+		<if test="systemCode != null"> and system_code = #{systemCode}</if>
+		<if test="loggerName != null"> and logger_name = #{loggerName}</if>
+		<if test="loggerPassword != null"> and logger_password = #{loggerPassword}</if>
+		<if test="clientUrl != null"> and client_url = #{clientUrl}</if>
+		<if test="createDate != null"> and create_date = #{createDate}</if>
+		<if test="updateDate != null"> and update_date = #{updateDate}</if>
+		<if test="isDeleted != null"> and is_deleted = #{isDeleted}</if>
+		<if test="sysType != null"> and sys_type = #{sysType}</if>
+		<if test="id != null"> and id = #{id} </if>
+		</where>
+		LIMIT 1
+	</select>
+	
+	<!-- 获得SysMonitorConfig对象,以参数SysMonitorConfig对象中不为空的属性作为条件进行查询 -->
+	<select id="selectSysMonitorConfigByObj" parameterType="com.sh.monitor.entity.SysMonitorConfig" resultMap="result_SysMonitorConfig_Map">
+		select
+		<include refid="sys_monitor_config_Column" />
+		from sys_monitor_config
+		<where>
+		<if test="systemStatus != null"> and system_status = #{systemStatus}</if>
+		<if test="systemCron != null"> and system_cron = #{systemCron}</if>
+		<if test="systemSwitch != null"> and system_switch = #{systemSwitch}</if>
+		<if test="systemName != null"> and system_name = #{systemName}</if>
+		<if test="systemCode != null"> and system_code = #{systemCode}</if>
+		<if test="loggerName != null"> and logger_name = #{loggerName}</if>
+		<if test="loggerPassword != null"> and logger_password = #{loggerPassword}</if>
+		<if test="clientUrl != null"> and client_url = #{clientUrl}</if>
+		<if test="createDate != null"> and create_date = #{createDate}</if>
+		<if test="updateDate != null"> and update_date = #{updateDate}</if>
+		<if test="isDeleted != null"> and is_deleted = #{isDeleted}</if>
+		<if test="sysType != null"> and sys_type = #{sysType}</if>
+		<if test="id != null"> and id = #{id} </if>
+		</where>
+	</select>
+
+	<!-- 将SysMonitorConfig插入到对应数据库的表中,包括属性值为null的数据 -->
+	<insert id="insertSysMonitorConfig" parameterType="com.sh.monitor.entity.SysMonitorConfig">
+		insert into 
+		sys_monitor_config (id,system_status,system_cron,system_switch,system_name,system_code,logger_name,logger_password,client_url,create_date,update_date,is_deleted,sys_type) 
+		values(#{id},#{systemStatus},#{systemCron},#{systemSwitch},#{systemName},#{systemCode},#{loggerName},#{loggerPassword},#{clientUrl},#{createDate},#{updateDate},#{isDeleted},#{sysType})
+	</insert>
+
+	<!-- 将SysMonitorConfig中属性值不为null的数据,插入到对应数据库的表中 -->
+	<insert id="insertNotNullSysMonitorConfig" parameterType="com.sh.monitor.entity.SysMonitorConfig">
+		insert into sys_monitor_config
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">id,</if>
+			<if test="systemStatus != null">system_status,</if>
+			<if test="systemCron != null">system_cron,</if>
+			<if test="systemSwitch != null">system_switch,</if>
+			<if test="systemName != null">system_name,</if>
+			<if test="systemCode != null">system_code,</if>
+			<if test="loggerName != null">logger_name,</if>
+			<if test="loggerPassword != null">logger_password,</if>
+			<if test="clientUrl != null">client_url,</if>
+			<if test="createDate != null">create_date,</if>
+			<if test="updateDate != null">update_date,</if>
+			<if test="isDeleted != null">is_deleted,</if>
+			<if test="sysType != null">sys_type,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">#{id},</if>
+			<if test="systemStatus != null">#{systemStatus},</if>
+			<if test="systemCron != null">#{systemCron},</if>
+			<if test="systemSwitch != null">#{systemSwitch},</if>
+			<if test="systemName != null">#{systemName},</if>
+			<if test="systemCode != null">#{systemCode},</if>
+			<if test="loggerName != null">#{loggerName},</if>
+			<if test="loggerPassword != null">#{loggerPassword},</if>
+			<if test="clientUrl != null">#{clientUrl},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="updateDate != null">#{updateDate},</if>
+			<if test="isDeleted != null">#{isDeleted},</if>
+			<if test="sysType != null">#{sysType},</if>
+		</trim>
+	</insert>
+
+	<!-- 将SysMonitorConfig批量插入到对应数据库的表中 -->
+	<insert id="insertSysMonitorConfigByBatch" parameterType="ArrayList">
+		insert into sys_monitor_config(id,system_status,system_cron,system_switch,system_name,system_code,logger_name,logger_password,client_url,create_date,update_date,is_deleted,sys_type) values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.id},#{item.systemStatus},#{item.systemCron},#{item.systemSwitch},#{item.systemName},#{item.systemCode},#{item.loggerName},#{item.loggerPassword},#{item.clientUrl},#{item.createDate},#{item.updateDate},#{item.isDeleted},#{item.sysType})
+		</foreach>
+	</insert>
+	
+	<!-- 通过SysMonitorConfig的id将数据库表中对应的数据删除 -->
+	<delete id="deleteSysMonitorConfigById" parameterType="String">
+		delete from sys_monitor_config
+		where  id  =  #{id}
+	</delete>
+
+	<!-- 通过辅助工具Assist中的条件将SysMonitorConfig对应的数据库表的数据删除 -->
+	<delete id="deleteSysMonitorConfigByAssist" parameterType="com.sh.monitor.common.util.Assist">
+		delete from sys_monitor_config
+		<if test="require!=null">
+			<include refid="assist" />
+		</if>
+	</delete>
+	
+	<!-- 通过SysMonitorConfig的id将SysMonitorConfig的数据更新到数据库中对应的表,包括值null的数据 -->
+	<update id="updateSysMonitorConfigById" parameterType="com.sh.monitor.entity.SysMonitorConfig"> 
+		update sys_monitor_config set
+		<set>
+			system_status = #{systemStatus} , 
+			system_cron = #{systemCron} , 
+			system_switch = #{systemSwitch} , 
+			system_name = #{systemName} , 
+			system_code = #{systemCode} , 
+			logger_name = #{loggerName} , 
+			logger_password = #{loggerPassword} , 
+			client_url = #{clientUrl} , 
+			create_date = #{createDate} , 
+			update_date = #{updateDate} , 
+			is_deleted = #{isDeleted} , 
+			sys_type = #{sysType} , 
+		</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 通过SysMonitorConfig的id将SysMonitorConfig中属性值不为null的数据更新到数据库对应的表中 -->
+	<update id="updateNotNullSysMonitorConfigById" parameterType="com.sh.monitor.entity.SysMonitorConfig">
+		update sys_monitor_config
+		<set>
+					<if test="systemStatus != null">system_status = #{systemStatus},</if>
+					<if test="systemCron != null">system_cron = #{systemCron},</if>
+					<if test="systemSwitch != null">system_switch = #{systemSwitch},</if>
+					<if test="systemName != null">system_name = #{systemName},</if>
+					<if test="systemCode != null">system_code = #{systemCode},</if>
+					<if test="loggerName != null">logger_name = #{loggerName},</if>
+					<if test="loggerPassword != null">logger_password = #{loggerPassword},</if>
+					<if test="clientUrl != null">client_url = #{clientUrl},</if>
+					<if test="createDate != null">create_date = #{createDate},</if>
+					<if test="updateDate != null">update_date = #{updateDate},</if>
+					<if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+					<if test="sysType != null">sys_type = #{sysType},</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 通过辅助工具Assist中的条件将SysMonitorConfig中的数据更新到数据库对应的表中,包括值为null的数据 -->
+	<update id="updateSysMonitorConfig" parameterType="map">
+		update sys_monitor_config
+		<set>
+			id = #{enti.id},
+			system_status = #{enti.systemStatus},
+			system_cron = #{enti.systemCron},
+			system_switch = #{enti.systemSwitch},
+			system_name = #{enti.systemName},
+			system_code = #{enti.systemCode},
+			logger_name = #{enti.loggerName},
+			logger_password = #{enti.loggerPassword},
+			client_url = #{enti.clientUrl},
+			create_date = #{enti.createDate},
+			update_date = #{enti.updateDate},
+			is_deleted = #{enti.isDeleted},
+			sys_type = #{enti.sysType},
+		</set>
+		<if test="assist.require!=null">
+			<include refid="updateAssist" />
+		</if>
+	</update>
+
+	<!-- 通过辅助工具Assist中的条件将SysMonitorConfig中属性值不为null的数据更新到数据库对应的表中 -->
+	<update id="updateNotNullSysMonitorConfig" parameterType="map">
+		update sys_monitor_config
+		<set>
+			<if test="enti.id != null">id = #{enti.id},</if>
+			<if test="enti.systemStatus != null">system_status = #{enti.systemStatus},</if>
+			<if test="enti.systemCron != null">system_cron = #{enti.systemCron},</if>
+			<if test="enti.systemSwitch != null">system_switch = #{enti.systemSwitch},</if>
+			<if test="enti.systemName != null">system_name = #{enti.systemName},</if>
+			<if test="enti.systemCode != null">system_code = #{enti.systemCode},</if>
+			<if test="enti.loggerName != null">logger_name = #{enti.loggerName},</if>
+			<if test="enti.loggerPassword != null">logger_password = #{enti.loggerPassword},</if>
+			<if test="enti.clientUrl != null">client_url = #{enti.clientUrl},</if>
+			<if test="enti.createDate != null">create_date = #{enti.createDate},</if>
+			<if test="enti.updateDate != null">update_date = #{enti.updateDate},</if>
+			<if test="enti.isDeleted != null">is_deleted = #{enti.isDeleted},</if>
+			<if test="enti.sysType != null">sys_type = #{enti.sysType},</if>
+		</set>
+		<if test="assist.require!=null">
+			<include refid="updateAssist" />
+		</if>
+	</update>
+</mapper>
