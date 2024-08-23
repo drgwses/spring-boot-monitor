@@ -40,10 +40,10 @@ public class SysMonitorLogServiceImpl implements SysMonitorLogService {
 	public String find(SysMonitorLog value) {
 		//TODO这里可以做通过Assist做添加查询
 		Assist assist = new Assist();
-		if (StringUtils.isNullOrEmpty(value.getSystemName())){
+		if (!StringUtils.isNullOrEmpty(value.getSystemName())){
 			assist.andLike("system_name",value.getSystemName());
 		}
-		if (StringUtils.isNullOrEmpty(value.getSystemName())) {
+		if (!StringUtils.isNullOrEmpty(value.getSystemName())) {
 			assist.andEq("system_code",value.getSystemCode());
 		}
 		assist.setResultColumn("id,system_name,system_code,monitor_result,fail_info,sys_type,create_date");

@@ -48,11 +48,19 @@ public class QynlkfptController {
     @RequestMapping(value = "start", method = RequestMethod.POST)
     public void start(SysMonitorConfig sysMonitorConfig) {
         try {
-            for (int i = 0; i < 4; i++) {
-                Thread.sleep(10000);
+            // 循环5次
+            for (int i = 0; i < 5; i++) {
+                if (i > 0) { // 只有在第一次之后才需要等待
+                    Thread.sleep(10000);
+                }
                 startRun(sysMonitorConfig);
             }
+        } catch (InterruptedException e) {
+            // 如果Thread.sleep()被中断
+            Thread.currentThread().interrupt(); // 恢复中断状态
+            throw new RuntimeException("Interrupted during sleep", e);
         } catch (Exception e) {
+            // 处理或记录其他类型的异常
             throw new RuntimeException(e);
         }
     }

@@ -1,10 +1,18 @@
 package com.sh.monitor.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.sh.monitor.common.constant.R;
+import com.sh.monitor.entity.SysMonitorLog;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.sh.monitor.service.SysMonitorConfigService;
 import com.sh.monitor.entity.SysMonitorConfig;
+
+import java.util.List;
 
 /**
  * SysMonitorConfig的路由接口服务
@@ -25,8 +33,21 @@ public class SysMonitorConfigController {
 	 * @return
 	 */
 	@PostMapping(value = "/querySysMonitorConfig", produces = {"application/json;charset=UTF-8"})
-	public String find(@RequestBody SysMonitorConfig value) {
-		return sysMonitorConfigService.find(value);
+	public String find(@RequestBody @Validated SysMonitorConfig value, BindingResult bindingResult) {
+		R r = new R();
+		if (bindingResult.hasErrors()) {
+			List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+			for (FieldError fieldError : fieldErrors) {
+				String defaultMessage = fieldError.getDefaultMessage();
+				String field = fieldError.getField();
+				r.setCode(20001);
+				r.setMessage(field+defaultMessage);
+				return JSONObject.toJSONString(r);
+			}
+		}else {
+			return sysMonitorConfigService.find(value);
+		}
+		return "";
 	}
 	
 	/**

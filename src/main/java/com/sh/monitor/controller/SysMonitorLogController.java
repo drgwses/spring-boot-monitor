@@ -1,10 +1,16 @@
 package com.sh.monitor.controller;
 
+import com.sh.monitor.common.constant.R;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.sh.monitor.service.SysMonitorLogService;
 import com.sh.monitor.entity.SysMonitorLog;
+
+import java.util.List;
 
 /**
  * SysMonitorLog的路由接口服务
@@ -26,8 +32,20 @@ public class SysMonitorLogController {
 	 * @return
 	 */
 	@PostMapping(value = "/querySysMonitorLog", produces = {"application/json;charset=UTF-8"})
-	public String find(@RequestBody SysMonitorLog value) {
-		return sysMonitorLogService.find(value);
+	public String find(@RequestBody @Validated SysMonitorLog value, BindingResult bindingResult) {
+		R r = new R();
+		if (bindingResult.hasErrors()) {
+			List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+			for (FieldError fieldError : fieldErrors) {
+				String defaultMessage = fieldError.getDefaultMessage();
+				r.setCode(20001);
+				r.setMessage( defaultMessage);
+				return r.toString();
+			}
+		}else {
+			return sysMonitorLogService.find(value);
+		}
+		return "";
 	}
 	
 	/**

@@ -2,6 +2,9 @@ package com.sh.monitor.entity;
 
 import com.alibaba.fastjson.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
+
 /**
  * sys_monitor_log实体类
  * 
@@ -12,9 +15,11 @@ public class SysMonitorLog {
 	/**主键*/
 	private String id; 
 	/**系统名称*/
+	@NotNull
 	private String systemName; 
 	/**系统编码 关联sys_monitor_config 中的system_code*/
-	private String systemCode; 
+	@NotNull
+	private String systemCode;
 	/**巡检结果 0:成功 1：失败*/
 	private String monitorResult; 
 	/**失败原因*/

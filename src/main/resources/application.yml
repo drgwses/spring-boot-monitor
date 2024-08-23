@@ -9,7 +9,7 @@ spring:
     name: ohms-monitor
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.110.102:13306/ydjt_open_platform_hx?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF8&useSSL=false
+    url: jdbc:mysql://192.168.110.102:13306/xjfw_monitor?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF8&useSSL=false
     username: ydjtdejftest
     password: Sg186!@#
     type: com.alibaba.druid.pool.DruidDataSource

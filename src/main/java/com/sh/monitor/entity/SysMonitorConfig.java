@@ -2,6 +2,9 @@ package com.sh.monitor.entity;
 
 import com.alibaba.fastjson.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
+
 /**
  * sys_monitor_config实体类
  * 
@@ -12,14 +15,16 @@ public class SysMonitorConfig {
 	/**主键*/
 	private String id; 
 	/**系统状态 0:正常 1：异常*/
-	private String systemStatus; 
+	private String systemStatus;
 	/**巡检周期 cron 表达式*/
 	private String systemCron; 
 	/**巡检开关 0：开启 1:关闭*/
 	private String systemSwitch; 
 	/**系统名称*/
+	@NotNull
 	private String systemName; 
 	/**系统编码*/
+	@NotNull
 	private String systemCode; 
 	/**用户账户*/
 	private String loggerName; 

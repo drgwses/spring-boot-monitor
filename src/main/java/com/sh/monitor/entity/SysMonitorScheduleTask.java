@@ -2,6 +2,8 @@ package com.sh.monitor.entity;
 
 import com.alibaba.fastjson.JSONObject;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * sys_monitor_schedule_task实体类
  * 
@@ -12,9 +14,11 @@ public class SysMonitorScheduleTask {
 	/**主键*/
 	private String id; 
 	/**系统名称*/
+	@NotNull
 	private String systemName; 
 	/**系统编码 关联sys_monitor_config 中的system_code*/
-	private String systemCode; 
+	@NotNull
+	private String systemCode;
 	/**定时任务类*/
 	private String taskClazz; 
 	/**定时任务执行方法*/

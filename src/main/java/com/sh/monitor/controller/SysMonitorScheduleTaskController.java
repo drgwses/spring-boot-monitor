@@ -1,10 +1,16 @@
 package com.sh.monitor.controller;
 
+import com.sh.monitor.common.constant.R;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.sh.monitor.service.SysMonitorScheduleTaskService;
 import com.sh.monitor.entity.SysMonitorScheduleTask;
+
+import java.util.List;
 
 /**
  * SysMonitorScheduleTask的路由接口服务
@@ -26,8 +32,21 @@ public class SysMonitorScheduleTaskController {
 	 * @return
 	 */
 	@PostMapping(value = "/querySysMonitorScheduleTask", produces = {"application/json;charset=UTF-8"})
-	public String find(@RequestBody SysMonitorScheduleTask value) {
-		return sysMonitorScheduleTaskService.find(value);
+	public String find(@RequestBody @Validated SysMonitorScheduleTask value, BindingResult bindingResult) {
+		R r = new R();
+		if (bindingResult.hasErrors()) {
+			List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+			for (FieldError fieldError : fieldErrors) {
+				String defaultMessage = fieldError.getDefaultMessage();
+				String field = fieldError.getField();
+				r.setCode(20001);
+				r.setMessage(field+defaultMessage);
+				return r.toString();
+			}
+		}else {
+			return sysMonitorScheduleTaskService.find(value);
+		}
+		return "";
 	}
 	
 	/**
