@@ -22,4 +22,6 @@ chromeDriverPath: C:\Users\root\Desktop\springaaa\spring-boot-monitor\src\main\r
 loadLocal:
   scheduled:
     fixedRate: 60000
+    #loadKey: 1-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
+    #git remote set-url origin  https://1-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@github.com/drgwses/spring-boot-monitor.git
 
