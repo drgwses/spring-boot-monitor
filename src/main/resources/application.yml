@@ -17,7 +17,7 @@ spring:
 mybatis:
   mapper-locations: classpath:mapper/*.xml
 # 浏览器驱动配置
-chromeDriverPath: C:\Users\袁振\Desktop\springaaa\spring-boot-monitor\src\main\resources\drivers\chromedriver.exe
+chromeDriverPath: C:\Users\root\Desktop\springaaa\spring-boot-monitor\src\main\resources\drivers\chromedriver.exe
 
 loadLocal:
   scheduled:
