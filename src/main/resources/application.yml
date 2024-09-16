@@ -3,15 +3,16 @@ server:
   port: 18764
   servlet:
     context-path: /ohms-monitor
+  address: 192.168.43.138
 spring:
   # 配置数据源
   application:
     name: ohms-monitor
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.110.102:13306/xjfw_monitor?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF8&useSSL=false
-    username: ydjtdejftest
-    password: Sg186!@#
+    url: jdbc:mysql://localhost:3306/nacos2.4.1?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF8&useSSL=false
+    username: root
+    password: New123#
     type: com.alibaba.druid.pool.DruidDataSource
 # mybatis配置
 mybatis:
@@ -24,4 +25,11 @@ loadLocal:
     fixedRate: 60000
     #loadKey: 1-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
     #git remote set-url origin  https://1-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@github.com/drgwses/spring-boot-monitor.git
+
+nacos:
+  config:
+    server-addr: 192.168.43.138:8848
+  discovery:
+    server-addr: 192.168.43.138:8848
+    # 123
 
